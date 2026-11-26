@@ -30,10 +30,19 @@ Worker is serving, and for the API that it reaches its database; they do not exe
 
 ## Alerts
 
-When a component that was up is found down, that run publishes the page and then fails on purpose. GitHub emails a
-failed scheduled run to whoever last changed the workflow's schedule, so the failure is the alert: check that
-"Actions" notifications are on under GitHub's notification settings. Only the change raises it; while the component
-stays down, later runs pass and the page shows the outage. A recovery is noted on the run and shows on the page.
+When a component that was up is found down, that run opens an issue labelled `outage` in the hosting repository,
+publishes the page, and then fails on purpose. GitHub emails a repository's watchers about new issues (its owner
+watches it by default), so the issue is the alert; the failed run is a second signal. Only the change raises it: while
+the component stays down, later runs pass and the page shows the outage. When every check passes again the issue is
+closed with a comment.
+
+## When GitHub's schedule does not run
+
+GitHub does not promise that a scheduled workflow runs: runs are delayed and dropped under load, and a new
+repository's schedule may not start for hours. So every check ends by looking for a scheduled run in the last 20
+minutes. Finding none, it waits four minutes and starts the next check itself; once the schedule is running, the chain
+stops by itself. If both ever stop, start one run by hand (Actions, Status, "Run workflow") and the chain resumes.
+Meanwhile the page tells its readers that its checks are delayed.
 
 ## Post an incident
 

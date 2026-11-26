@@ -20,7 +20,10 @@ writeFileSync(file, `${JSON.stringify(record(history, results, new Date()), null
 // Tell the workflow what changed, so it can raise an alert when something goes down (see workflow/status.yml).
 const names = (ids) => ids.map((id) => components.find((c) => c.id === id)?.name ?? id).join(', ')
 const changed = transitions(history.latest, results)
-if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `down=${names(changed.down)}\nrecovered=${names(changed.recovered)}\n`)
+const stillDown = Object.keys(results).filter((id) => !results[id].ok)
+if (process.env.GITHUB_OUTPUT) {
+  appendFileSync(process.env.GITHUB_OUTPUT, `down=${names(changed.down)}\nrecovered=${names(changed.recovered)}\nstill_down=${names(stillDown)}\n`)
+}
 if (changed.down.length) console.log(`went down: ${names(changed.down)}`)
 if (changed.recovered.length) console.log(`recovered: ${names(changed.recovered)}`)
 for (const [id, result] of Object.entries(results)) console.log(`${result.ok ? 'up  ' : 'DOWN'} ${id}: ${result.ok ? `${result.ms}ms` : result.detail}`)
