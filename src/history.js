@@ -1,7 +1,8 @@
 // The uptime history: per component, per UTC day, how many checks ran and how many failed. Pure functions; the
 // checker writes the file and the page reads it.
 
-/** @typedef {{ checks: number, failures: number }} Day */
+/** `ms` is the sum of the response times of the `timed` successful checks, so a day's average is `ms / timed`. */
+/** @typedef {{ checks: number, failures: number, ms?: number, timed?: number }} Day */
 /** @typedef {{ version: 1, components: Record<string, { days: Record<string, Day> }>, latest: { checkedAt: string | null, components: Record<string, { ok: boolean, detail: string }> } }} History */
 
 /** @returns {History} */
@@ -30,7 +31,13 @@ export function record(history, results, now, keepDays = 400) {
   for (const [id, result] of Object.entries(results)) {
     const days = { ...(components[id]?.days ?? {}) }
     const day = days[today] ?? { checks: 0, failures: 0 }
-    days[today] = { checks: day.checks + 1, failures: day.failures + (result.ok ? 0 : 1) }
+    const timed = result.ok && Number.isFinite(result.ms)
+    days[today] = {
+      checks: day.checks + 1,
+      failures: day.failures + (result.ok ? 0 : 1),
+      ms: (day.ms ?? 0) + (timed ? result.ms : 0),
+      timed: (day.timed ?? 0) + (timed ? 1 : 0),
+    }
     for (const key of Object.keys(days)) if (key < oldest) delete days[key]
     components[id] = { days }
   }
@@ -59,6 +66,20 @@ export function uptime(days, keys) {
   // Floor, not round: 99.999% of a window with a failure in it must not read as 100.00.
   return (Math.floor(((checks - failures) / checks) * 10_000) / 100).toFixed(2)
 }
+
+/** Average response time over `keys` in whole milliseconds, or null when no timed check ran in the window. */
+export function responseTime(days, keys) {
+  let ms = 0
+  let timed = 0
+  for (const key of keys) {
+    ms += days?.[key]?.ms ?? 0
+    timed += days?.[key]?.timed ?? 0
+  }
+  return timed === 0 ? null : Math.round(ms / timed)
+}
+
+/** The share of a day's checks that passed, as `'99.65'`, or null without checks. Floored, like `uptime`. */
+export const dayUptime = (day) => (!day || day.checks === 0 ? null : (Math.floor(((day.checks - day.failures) / day.checks) * 10_000) / 100).toFixed(2))
 
 const RANK = { nodata: 0, operational: 1, maintenance: 2, degraded: 3, outage: 4 }
 /** The more serious of two levels. */

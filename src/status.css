@@ -251,12 +251,106 @@ button:focus-visible {
   min-width: 0;
   border-radius: 2px;
   background: var(--level);
+  transition: transform 120ms ease;
 }
 .bar.level-nodata {
   background: var(--line);
 }
-.bar:hover {
-  opacity: 0.7;
+.bar.active {
+  transform: scaleY(1.18);
+  filter: brightness(1.15);
+}
+.bars:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: 3px;
+}
+.figures {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  white-space: nowrap;
+}
+.ms {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.state {
+  color: var(--level);
+  font-weight: 500;
+}
+
+/* The day card: one element, moved to whichever day is hovered, focused or tapped. */
+.tip {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 16px));
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow-popover);
+  font-size: 13px;
+  line-height: 18px;
+  pointer-events: none;
+}
+.tip-day {
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+.tip-line {
+  margin-top: 4px;
+}
+.tip-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.tip-level::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--level);
+}
+.tip-level.level-nodata::before {
+  background: var(--line);
+}
+.tip-detail {
+  color: var(--ink-muted);
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--level-soft);
+  color: var(--ink);
+  font-size: 13px;
+}
+.notice .icon {
+  margin-top: 2px;
+}
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-control);
+  text-decoration: none;
+  font-weight: 500;
+}
+.skip:focus {
+  top: 12px;
 }
 .legend {
   display: flex;
@@ -357,6 +451,13 @@ button:focus-visible {
 .date.ring {
   color: var(--ink);
   box-shadow: inset 0 0 0 1.5px var(--level);
+  text-decoration: none;
+}
+a.date.ring:hover {
+  background: var(--level-soft);
+}
+.date.ring:focus-visible {
+  box-shadow: inset 0 0 0 1.5px var(--level), var(--shadow-focus);
 }
 
 .empty-state {
@@ -374,6 +475,20 @@ button:focus-visible {
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;
+}
+.incident h3 a {
+  text-decoration: none;
+}
+.incident h3 a:hover {
+  text-decoration: underline;
+}
+/* Reached from the calendar or the feed: the incident is marked until the reader moves on. */
+.incident:target {
+  background: var(--surface-raised);
+  box-shadow: inset 2px 0 0 var(--link);
+}
+.incident {
+  scroll-margin-top: 16px;
 }
 .incident .meta {
   margin-top: 4px;
@@ -423,6 +538,10 @@ button:focus-visible {
 .foot a {
   text-decoration: none;
 }
+.foot-links {
+  display: flex;
+  gap: 16px;
+}
 .foot a:hover {
   color: var(--ink);
 }
@@ -440,8 +559,7 @@ button:focus-visible {
   .bar:nth-child(-n + 45) {
     display: none;
   }
-  .system-name .host,
-  .range-90 {
+  .system-name .host {
     display: none;
   }
   .cell {

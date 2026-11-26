@@ -10,7 +10,9 @@ test('up when every probe answers an expected status; redirects are not followed
   const seen = []
   const fetchImpl = async (url, init) => (seen.push([url, init.redirect]), answer(url.endsWith('/a') ? 200 : 401))
   const result = await checkComponent(component([{ url: 'https://x.test/a', expect: [200] }, { url: 'https://x.test/b', expect: [401] }]), { fetchImpl, ...fast })
-  assert.deepEqual(result, { ok: true, detail: 'ok' })
+  assert.equal(result.ok, true)
+  assert.equal(result.detail, 'ok')
+  assert.ok(Number.isInteger(result.ms) && result.ms >= 0) // the slowest probe's response time
   assert.deepEqual(seen, [['https://x.test/a', 'manual'], ['https://x.test/b', 'manual']])
 })
 
@@ -32,7 +34,7 @@ test('one failure followed by a success is up', async () => {
 test('a network error is down and names the reason', async () => {
   const fetchImpl = async () => Promise.reject(Object.assign(new Error('fetch failed'), { cause: { code: 'ENOTFOUND' } }))
   const result = await checkComponent(component([{ url: 'https://x.test/a', expect: [200] }]), { fetchImpl, ...fast })
-  assert.deepEqual(result, { ok: false, detail: 'https://x.test/a: ENOTFOUND' })
+  assert.deepEqual(result, { ok: false, ms: null, detail: 'https://x.test/a: ENOTFOUND' })
 })
 
 test('sends the probe headers and a user agent that names the checker', async () => {

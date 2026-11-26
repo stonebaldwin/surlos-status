@@ -15,4 +15,4 @@ try {
 
 const results = Object.fromEntries(await Promise.all(components.map(async (c) => [c.id, await checkComponent(c)])))
 writeFileSync(file, `${JSON.stringify(record(history, results, new Date()), null, 2)}\n`)
-for (const [id, result] of Object.entries(results)) console.log(`${result.ok ? 'up  ' : 'DOWN'} ${id}: ${result.detail}`)
+for (const [id, result] of Object.entries(results)) console.log(`${result.ok ? 'up  ' : 'DOWN'} ${id}: ${result.ok ? `${result.ms}ms` : result.detail}`)

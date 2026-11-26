@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { emptyHistory } from '../src/history.js'
 import { parseIncident } from '../src/incidents.js'
-import { buildModel, renderFeed, renderPage } from '../src/render.js'
+import { buildModel, renderFeed, renderJson, renderPage } from '../src/render.js'
 import { components, site } from '../status.config.js'
 
 const here = fileURLToPath(new URL('..', import.meta.url))
@@ -32,8 +32,10 @@ rmSync(dist, { recursive: true, force: true })
 mkdirSync(dist, { recursive: true })
 cpSync(join(here, 'assets'), dist, { recursive: true })
 cpSync(join(here, 'src/status.css'), join(dist, 'status.css'))
+cpSync(join(here, 'src/client.js'), join(dist, 'status.js'))
 writeFileSync(join(dist, 'index.html'), renderPage(model))
 writeFileSync(join(dist, 'feed.xml'), renderFeed(model))
+writeFileSync(join(dist, 'status.json'), renderJson(model))
 // The custom domain, for GitHub Pages.
 writeFileSync(join(dist, 'CNAME'), `${new URL(site.url).host}\n`)
 console.log(`dist/: ${model.headline.title}; ${model.rows.map((r) => `${r.id} ${r.uptime ?? 'n/a'}`).join(', ')}; ${incidents.length} incidents`)

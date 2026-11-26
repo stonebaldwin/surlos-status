@@ -4,7 +4,7 @@ import { writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { lastDays } from '../src/history.js'
 import { parseIncident } from '../src/incidents.js'
-import { buildModel, renderFeed, renderPage } from '../src/render.js'
+import { buildModel, renderFeed, renderJson, renderPage } from '../src/render.js'
 import { components, site } from '../status.config.js'
 
 await import('./build.js') // the assets and stylesheets
@@ -18,7 +18,7 @@ components.forEach((component, c) => {
   keys.forEach((key, i) => {
     if (i < 20 && c > 1) return // two components with a shorter history
     const failures = i === 62 && c === 0 ? 200 : (i * 7 + c * 13) % 41 === 0 ? 6 : 0
-    days[key] = { checks: 288, failures }
+    days[key] = { checks: 288, failures, ms: (288 - failures) * (120 + c * 35 + (i % 9) * 6), timed: 288 - failures }
   })
   history.components[component.id] = { days }
   history.latest.components[component.id] = { ok: true, detail: 'ok' }
@@ -39,4 +39,5 @@ const model = buildModel({ site, components, history, incidents, now })
 const dist = fileURLToPath(new URL('../dist/', import.meta.url))
 writeFileSync(`${dist}index.html`, renderPage(model))
 writeFileSync(`${dist}feed.xml`, renderFeed(model))
+writeFileSync(`${dist}status.json`, renderJson(model))
 console.log('dist/: demo data')
