@@ -1,0 +1,455 @@
+/* status.surlos.com. Every colour is a kit token from tokens.css (copied in at build time); light and dark follow the OS. */
+@font-face {
+  font-family: 'Geist';
+  src: url('fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('fonts/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 20px;
+}
+h1,
+h2,
+h3,
+p,
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+}
+ul,
+ol {
+  list-style: none;
+}
+a {
+  color: inherit;
+}
+[hidden] {
+  display: none !important;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.muted {
+  color: var(--ink-muted);
+}
+.icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header: the same lockup as the docs, with "Status" as the section name. */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+.lockup {
+  display: inline-flex;
+  align-items: baseline;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.logo {
+  display: block;
+  width: 96px;
+  height: 18px;
+}
+.logo.dark {
+  display: none;
+}
+.rule {
+  align-self: center;
+  width: 1px;
+  height: 16px;
+  margin: 0 10px;
+  background: var(--line);
+}
+.section {
+  position: relative;
+  top: -1px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink-muted);
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow-control);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease;
+}
+.button:hover {
+  background: var(--surface-raised);
+}
+a:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* The levels: one colour each, used for the bar, the icon, the calendar ring and the banner's edge. */
+.level-operational {
+  --level: var(--success);
+  --level-soft: var(--success-soft);
+}
+.level-degraded {
+  --level: var(--warning);
+  --level-soft: var(--warning-soft);
+}
+.level-outage {
+  --level: var(--critical);
+  --level-soft: var(--critical-soft);
+}
+.level-maintenance {
+  --level: var(--link);
+  --level-soft: var(--mist);
+}
+.level-nodata {
+  --level: var(--ink-muted);
+  --level-soft: var(--surface-raised);
+}
+.icon[class*='level-'] {
+  color: var(--level);
+}
+
+.banner {
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--level-soft);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--level) 35%, transparent);
+}
+.banner h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.banner h1 .icon {
+  width: 20px;
+  height: 20px;
+}
+.banner p {
+  margin-top: 4px;
+  padding-left: 28px;
+  color: var(--ink-muted);
+}
+.banner p:empty {
+  display: none;
+}
+
+.card {
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.card-head h2 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.systems li {
+  padding: 14px 16px;
+  border-top: 1px solid var(--line);
+}
+.systems li:first-child {
+  border-top: 0;
+}
+.system-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+.system-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-weight: 500;
+  color: var(--ink);
+}
+.system-name .host {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+}
+.bars {
+  display: flex;
+  gap: 2px;
+  height: 28px;
+}
+.bar {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 2px;
+  background: var(--level);
+}
+.bar.level-nodata {
+  background: var(--line);
+}
+.bar:hover {
+  opacity: 0.7;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 16px;
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--level);
+}
+.swatch.level-nodata {
+  background: var(--line);
+}
+
+.month-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+.month-nav button {
+  display: none;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.js .month-nav button {
+  display: inline-flex;
+}
+.month-nav button:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+.month-nav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.weekdays,
+.month {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.weekdays {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+  font-size: 12px;
+  line-height: 16px;
+}
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.month .cell:nth-child(7n + 1) {
+  border-left: 0;
+}
+.month .cell:nth-child(-n + 7) {
+  border-top: 0;
+}
+.cell.future {
+  color: var(--ink-disabled);
+}
+.cell.today .date {
+  color: var(--ink);
+  font-weight: 600;
+}
+.date {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+}
+.date.ring {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--level);
+}
+
+.empty-state {
+  padding: 24px 16px;
+  text-align: center;
+}
+.incident {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+}
+.card-head + .incident {
+  border-top: 0;
+}
+.incident h3 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.incident .meta {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  margin-right: 4px;
+  border-radius: 999px;
+  background: var(--level-soft);
+  color: var(--level);
+  font-size: 12px;
+  font-weight: 500;
+}
+.updates {
+  margin-top: 12px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+.updates li + li {
+  margin-top: 12px;
+}
+.updates .when {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.updates .when strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.updates p + p {
+  margin-top: 4px;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-top: 24px;
+  font-size: 13px;
+}
+.foot a {
+  text-decoration: none;
+}
+.foot a:hover {
+  color: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  .logo.light {
+    display: none;
+  }
+  .logo.dark {
+    display: block;
+  }
+}
+/* A phone has room for 45 days of bars, not 90. */
+@media (max-width: 560px) {
+  .bar:nth-child(-n + 45) {
+    display: none;
+  }
+  .system-name .host,
+  .range-90 {
+    display: none;
+  }
+  .cell {
+    height: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0ms !important;
+  }
+}

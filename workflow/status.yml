@@ -1,0 +1,58 @@
+# The status page's only workflow. Copy it to .github/workflows/status.yml in the repository that hosts the page
+# (a public repository, so Actions minutes and GitHub Pages are free and the checks run outside Cloudflare).
+#
+# Every five minutes it checks each component, commits the updated history, rebuilds the page and publishes it to
+# GitHub Pages. A push to main (a new incident file, a design change) rebuilds and publishes without checking.
+# GitHub may run scheduled workflows a few minutes late; the history counts checks, so a late run loses nothing.
+name: Status
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# One run at a time, never cancelled: two runs committing the history at once would conflict.
+concurrency:
+  group: status
+  cancel-in-progress: false
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tests
+        if: github.event_name == 'push'
+        run: node --test "test/*.test.js"
+      - name: Check every component
+        if: github.event_name != 'push'
+        run: node scripts/check.js
+      - name: Commit the history
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "surlos-status"
+          git config user.email "status@users.noreply.github.com"
+          git add data/history.json
+          git diff --cached --quiet || git commit -m "status: check $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
+      - name: Build the page
+        run: node scripts/build.js
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deploy
+        uses: actions/deploy-pages@v4

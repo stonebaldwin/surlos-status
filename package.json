@@ -1,0 +1,13 @@
+{
+  "name": "@ams/status",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "status.surlos.com: a static status page built from scheduled uptime checks. Self-contained: no workspace runtime dependencies, so it can run from its own repository on GitHub Actions and Pages, outside Cloudflare.",
+  "scripts": {
+    "check": "node scripts/check.js",
+    "build": "node scripts/build.js",
+    "sync-assets": "node scripts/sync-assets.js",
+    "test": "node --test \"test/*.test.js\""
+  }
+}
