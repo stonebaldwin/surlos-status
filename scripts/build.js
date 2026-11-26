@@ -1,5 +1,5 @@
 // Build the static site into dist/: index.html, feed.xml, the stylesheets and the assets. No dependencies.
-import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { emptyHistory } from '../src/history.js'
@@ -16,7 +16,9 @@ try {
 } catch {
   history = emptyHistory()
 }
-const incidents = readdirSync(join(here, 'incidents'))
+// No incidents yet means no directory: git does not keep an empty one.
+const incidentFiles = existsSync(join(here, 'incidents')) ? readdirSync(join(here, 'incidents')) : []
+const incidents = incidentFiles
   .filter((name) => name.endsWith('.md') && name !== 'README.md')
   .map((name) => parseIncident(readFileSync(join(here, 'incidents', name), 'utf8'), name))
 const known = new Set(components.map((c) => c.id))
