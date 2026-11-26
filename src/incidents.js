@@ -72,3 +72,34 @@ export function incidentDays(incident, now) {
   for (let t = Date.parse(incident.started.slice(0, 10)); t <= end.getTime(); t += 86_400_000) out.push(new Date(t).toISOString().slice(0, 10))
   return out
 }
+
+const slug = (title) =>
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48)
+const minute = (date) => `${date.toISOString().slice(0, 16)}:00Z`
+
+/** A new incident file: its name (`2026-11-26-api-errors.md`) and text, started now with one update. */
+export function newIncident({ title, impact, components = [], message, label = impact === 'maintenance' ? 'Started' : 'Investigating' }, now) {
+  if (!title?.trim()) throw new Error('An incident needs a title')
+  if (!IMPACTS.includes(impact)) throw new Error(`impact must be one of ${IMPACTS.join(', ')}`)
+  if (!message?.trim()) throw new Error('An incident needs a first update: what is happening, in a sentence')
+  const at = minute(now)
+  const lines = ['---', `title: ${title.trim()}`, `impact: ${impact}`]
+  if (components.length) lines.push(`components: ${components.join(', ')}`)
+  lines.push(`started: ${at}`, '---', `## ${at} ${label}`, message.trim(), '')
+  return { name: `${at.slice(0, 10)}-${slug(title)}.md`, text: lines.join('\n') }
+}
+
+/** The file's text with one more update. `resolve` also closes the incident, which takes it off the top of the page. */
+export function addUpdate(text, { label, message, resolve = false }, now, file = 'incident') {
+  const incident = parseIncident(text, file) // a file that does not parse is not edited
+  if (!message?.trim()) throw new Error('An update needs a message')
+  if (resolve && incident.resolved) throw new Error(`${file} is already resolved`)
+  const at = minute(now)
+  let out = text.replace(/\r\n/g, '\n').trimEnd()
+  if (resolve) out = out.replace(/\n---\n/, `\nresolved: ${at}\n---\n`)
+  return `${out}\n\n## ${at} ${label ?? (resolve ? 'Resolved' : 'Update')}\n${message.trim()}\n`
+}

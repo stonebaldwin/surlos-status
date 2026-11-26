@@ -81,6 +81,22 @@ export function responseTime(days, keys) {
 /** The share of a day's checks that passed, as `'99.65'`, or null without checks. Floored, like `uptime`. */
 export const dayUptime = (day) => (!day || day.checks === 0 ? null : (Math.floor(((day.checks - day.failures) / day.checks) * 10_000) / 100).toFixed(2))
 
+/**
+ * What changed between the previous round and this one: the components that were up and are now down, and those
+ * that were down and are now up. A component seen for the first time is neither, so a new check never raises an alarm.
+ */
+export function transitions(previous, results) {
+  const down = []
+  const recovered = []
+  for (const [id, result] of Object.entries(results)) {
+    const before = previous?.components?.[id]
+    if (!before) continue
+    if (before.ok && !result.ok) down.push(id)
+    if (!before.ok && result.ok) recovered.push(id)
+  }
+  return { down, recovered }
+}
+
 const RANK = { nodata: 0, operational: 1, maintenance: 2, degraded: 3, outage: 4 }
 /** The more serious of two levels. */
 export const worse = (a, b) => (RANK[a] >= RANK[b] ? a : b)

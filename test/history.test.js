@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { dayLevel, dayUptime, emptyHistory, lastDays, overall, record, responseTime, uptime, worse } from '../src/history.js'
+import { dayLevel, dayUptime, emptyHistory, lastDays, overall, record, responseTime, transitions, uptime, worse } from '../src/history.js'
 
 const NOW = new Date('2026-11-26T12:00:00Z')
 
@@ -71,4 +71,13 @@ test('overall: operational, partial, major, waiting, and an open incident wins',
   assert.equal(overall({ checkedAt: null, components: {} }, list).level, 'nodata')
   const incident = { impact: 'maintenance', title: 'Database maintenance', updates: [{ text: 'Started.' }] }
   assert.deepEqual(overall(latest(true, true), list, [incident]), { level: 'maintenance', title: 'Database maintenance', text: 'Started.' })
+})
+
+test('transitions: only a change is reported, and a new component is not an alarm', () => {
+  const previous = { checkedAt: NOW.toISOString(), components: { api: { ok: true }, web: { ok: false }, docs: { ok: true } } }
+  const results = { api: { ok: false }, web: { ok: true }, docs: { ok: true }, dashboard: { ok: false } }
+  assert.deepEqual(transitions(previous, results), { down: ['api'], recovered: ['web'] })
+  assert.deepEqual(transitions({ checkedAt: null, components: {} }, results), { down: [], recovered: [] })
+  // Still down on the next round: nothing new to report.
+  assert.deepEqual(transitions({ components: { api: { ok: false } } }, { api: { ok: false } }), { down: [], recovered: [] })
 })

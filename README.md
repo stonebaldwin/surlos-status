@@ -28,9 +28,25 @@ healthy system.
 The checks do not follow redirects and do not sign in. While the private-preview gate is on they prove that each
 Worker is serving, and for the API that it reaches its database; they do not exercise the pages behind the gate.
 
+## Alerts
+
+When a component that was up is found down, that run publishes the page and then fails on purpose. GitHub emails a
+failed scheduled run to whoever last changed the workflow's schedule, so the failure is the alert: check that
+"Actions" notifications are on under GitHub's notification settings. Only the change raises it; while the component
+stays down, later runs pass and the page shows the outage. A recovery is noted on the run and shows on the page.
+
 ## Post an incident
 
-Add a file to `incidents/`, named for its date, and push. The page rebuilds within a minute.
+The helper writes the file; commit and push it to publish. The page rebuilds within a minute.
+
+```bash
+node scripts/incident.js new --title "API errors on sign-in" --impact degraded --components api,dashboard \
+  --message "Sign-in requests are failing for some agencies."
+node scripts/incident.js update incidents/<file>.md --message "A fix is rolling out." --label Identified
+node scripts/incident.js resolve incidents/<file>.md --message "A bad deploy was rolled back."
+```
+
+Or write the file by hand: add it to `incidents/`, named for its date.
 
 ```md
 ---
@@ -58,9 +74,14 @@ node scripts/build.js              # build dist/
 node scripts/demo.js               # build dist/ from made-up data, to see every state
 node --test "test/*.test.js"       # the tests
 node scripts/sync-assets.js        # inside the monorepo only: refresh assets/ from the brand kit
+node scripts/publish.js            # inside the monorepo only: copy this directory to the hosting repository
 ```
 
 ## Hosting
+
+The page is hosted from [stonebaldwin/surlos-status](https://github.com/stonebaldwin/surlos-status). This directory is
+the source; after committing a change here, `node scripts/publish.js` copies it there (everything but the live
+history, which the checker commits in that repository). To set up hosting from scratch:
 
 1. Create a public repository with this directory's contents at its root, and copy `workflow/status.yml` to
    `.github/workflows/status.yml`.

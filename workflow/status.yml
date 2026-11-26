@@ -4,10 +4,15 @@
 # Every five minutes it checks each component, commits the updated history, rebuilds the page and publishes it to
 # GitHub Pages. A push to main (a new incident file, a design change) rebuilds and publishes without checking.
 # GitHub may run scheduled workflows a few minutes late; the history counts checks, so a late run loses nothing.
+#
+# Alerts: when a component that was up is found down, the run publishes the page and then fails on purpose. GitHub
+# emails a failed scheduled run to whoever last changed this file's schedule, so a failure is the alert. Only the
+# change fails a run: while the component stays down, later runs pass, and the page shows the outage.
 name: Status
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    # Off the round minutes, when GitHub's scheduler is busiest and drops the most runs.
+    - cron: '3-59/5 * * * *'
   push:
     branches: [main]
   workflow_dispatch:
@@ -38,6 +43,7 @@ jobs:
         if: github.event_name == 'push'
         run: node --test "test/*.test.js"
       - name: Check every component
+        id: check
         if: github.event_name != 'push'
         run: node scripts/check.js
       - name: Commit the history
@@ -56,3 +62,16 @@ jobs:
           path: dist
       - id: deploy
         uses: actions/deploy-pages@v4
+      - name: Note a recovery
+        if: steps.check.outputs.recovered != ''
+        env:
+          RECOVERED: ${{ steps.check.outputs.recovered }}
+        run: echo "::notice title=Recovered::$RECOVERED"
+      # Last, so the page is already published when the run fails.
+      - name: Alert when something went down
+        if: steps.check.outputs.down != ''
+        env:
+          DOWN: ${{ steps.check.outputs.down }}
+        run: |
+          echo "::error title=Surlos is down::$DOWN failed its checks. See https://status.surlos.com"
+          exit 1
