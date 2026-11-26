@@ -1,5 +1,58 @@
 {
   "version": 1,
-  "components": {},
-  "latest": { "checkedAt": null, "components": {} }
+  "components": {
+    "api": {
+      "days": {
+        "2026-11-26": {
+          "checks": 1,
+          "failures": 0
+        }
+      }
+    },
+    "dashboard": {
+      "days": {
+        "2026-11-26": {
+          "checks": 1,
+          "failures": 0
+        }
+      }
+    },
+    "docs": {
+      "days": {
+        "2026-11-26": {
+          "checks": 1,
+          "failures": 0
+        }
+      }
+    },
+    "web": {
+      "days": {
+        "2026-11-26": {
+          "checks": 1,
+          "failures": 0
+        }
+      }
+    }
+  },
+  "latest": {
+    "checkedAt": "2026-11-26T21:42:04.225Z",
+    "components": {
+      "api": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "dashboard": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "docs": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "web": {
+        "ok": true,
+        "detail": "ok"
+      }
+    }
+  }
 }
