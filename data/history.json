@@ -4,65 +4,65 @@
     "api": {
       "days": {
         "2026-11-26": {
-          "checks": 10,
+          "checks": 11,
           "failures": 0,
-          "ms": 2715,
-          "timed": 9
+          "ms": 3255,
+          "timed": 10
         }
       }
     },
     "dashboard": {
       "days": {
         "2026-11-26": {
-          "checks": 10,
+          "checks": 11,
           "failures": 0,
-          "ms": 4207,
-          "timed": 9
+          "ms": 4907,
+          "timed": 10
         }
       }
     },
     "docs": {
       "days": {
         "2026-11-26": {
-          "checks": 10,
+          "checks": 11,
           "failures": 0,
-          "ms": 6041,
-          "timed": 9
+          "ms": 7047,
+          "timed": 10
         }
       }
     },
     "web": {
       "days": {
         "2026-11-26": {
-          "checks": 10,
+          "checks": 11,
           "failures": 0,
-          "ms": 5212,
-          "timed": 9
+          "ms": 5900,
+          "timed": 10
         }
       }
     }
   },
   "latest": {
-    "checkedAt": "2026-11-26T23:36:33.434Z",
+    "checkedAt": "2026-11-26T23:41:03.246Z",
     "components": {
       "api": {
         "ok": true,
-        "ms": 280,
+        "ms": 540,
         "detail": "ok"
       },
       "dashboard": {
         "ok": true,
-        "ms": 452,
+        "ms": 700,
         "detail": "ok"
       },
       "docs": {
         "ok": true,
-        "ms": 632,
+        "ms": 1006,
         "detail": "ok"
       },
       "web": {
         "ok": true,
-        "ms": 630,
+        "ms": 688,
         "detail": "ok"
       }
     }
