@@ -10,10 +10,10 @@
           "timed": 14
         },
         "2026-11-27": {
-          "checks": 3,
+          "checks": 4,
           "failures": 0,
-          "ms": 1048,
-          "timed": 3
+          "ms": 1396,
+          "timed": 4
         }
       }
     },
@@ -26,10 +26,10 @@
           "timed": 14
         },
         "2026-11-27": {
-          "checks": 3,
+          "checks": 4,
           "failures": 0,
-          "ms": 2348,
-          "timed": 3
+          "ms": 2851,
+          "timed": 4
         }
       }
     },
@@ -42,10 +42,10 @@
           "timed": 14
         },
         "2026-11-27": {
-          "checks": 3,
+          "checks": 4,
           "failures": 0,
-          "ms": 2088,
-          "timed": 3
+          "ms": 2770,
+          "timed": 4
         }
       }
     },
@@ -58,35 +58,35 @@
           "timed": 14
         },
         "2026-11-27": {
-          "checks": 3,
+          "checks": 4,
           "failures": 0,
-          "ms": 1827,
-          "timed": 3
+          "ms": 2758,
+          "timed": 4
         }
       }
     }
   },
   "latest": {
-    "checkedAt": "2026-11-27T00:12:21.091Z",
+    "checkedAt": "2026-11-27T00:16:52.809Z",
     "components": {
       "api": {
         "ok": true,
-        "ms": 315,
+        "ms": 348,
         "detail": "ok"
       },
       "dashboard": {
         "ok": true,
-        "ms": 686,
+        "ms": 503,
         "detail": "ok"
       },
       "docs": {
         "ok": true,
-        "ms": 640,
+        "ms": 682,
         "detail": "ok"
       },
       "web": {
         "ok": true,
-        "ms": 592,
+        "ms": 931,
         "detail": "ok"
       }
     }
