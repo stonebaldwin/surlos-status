@@ -171,8 +171,8 @@ export function renderPage(model) {
 <div class="page">
 <header class="top">
   <a class="lockup" href="${esc(site.home)}" aria-label="${esc(site.name)} home">
-    <img class="logo light" src="brand/surlos-logo.svg" alt="${esc(site.name)}" width="96" height="18">
-    <img class="logo dark" src="brand/surlos-logo-reversed.svg" alt="${esc(site.name)}" width="96" height="18">
+    <img class="logo light" src="brand/surlos-logo.svg" alt="${esc(site.name)}" width="99" height="20">
+    <img class="logo dark" src="brand/surlos-logo-reversed.svg" alt="${esc(site.name)}" width="99" height="20">
     <span class="rule" aria-hidden="true"></span><span class="section">Status</span>
   </a>
   <nav class="actions" aria-label="Status page">
